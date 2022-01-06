@@ -2,8 +2,12 @@ HELP.md
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.log
 mvnw
 mvnw.cmd
+
+### H2 Database ###
+*.mv.db
 
 ### Mac OS X ###
 .DS_Store
