@@ -40,4 +40,14 @@ public class Task {
         updatedAt = LocalDateTime.now();
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+            "Task[id=%d, title='%s', description='%s', completed=%b]",
+            id,
+            title,
+            description,
+            completed
+        );
+    }
 }

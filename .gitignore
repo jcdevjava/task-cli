@@ -8,6 +8,7 @@ mvnw.cmd
 
 ### H2 Database ###
 *.mv.db
+*.trace.db
 
 ### Mac OS X ###
 .DS_Store
