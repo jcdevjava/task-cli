@@ -1,0 +1,2 @@
+insert into tasks(title, description, completed, created_at, updated_at) values('Crear una app para tareas', 'Utilizar spring-shell para una app de tareas', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Implementar el comando list', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
