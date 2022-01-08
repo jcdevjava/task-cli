@@ -1,12 +1,12 @@
 package xyz.jcpalma.taskcli.commands;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.*;
+import xyz.jcpalma.taskcli.helpers.ShellHelper;
 import xyz.jcpalma.taskcli.models.Task;
 import xyz.jcpalma.taskcli.services.TaskService;
 
@@ -18,8 +18,14 @@ import java.util.Optional;
 @ShellComponent
 public class TaskCommand {
 
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
+
+    private final ShellHelper shellHelper;
+
+    public TaskCommand(TaskService taskService, ShellHelper shellHelper) {
+        this.taskService = taskService;
+        this.shellHelper = shellHelper;
+    }
 
     @ShellMethod("List all tasks")
     public List<Task> list() {
@@ -45,7 +51,7 @@ public class TaskCommand {
             System.out.println(tableBuilder.build().render(80));
 
         } else {
-            System.out.println("Task not found\n");
+            shellHelper.printError("Task not found\n");
         }
     }
 
