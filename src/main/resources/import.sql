@@ -1,2 +1,12 @@
 insert into tasks(title, description, completed, created_at, updated_at) values('Crear una app para tareas', 'Utilizar spring-shell para una app de tareas', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 insert into tasks(title, description, completed, created_at, updated_at) values('Implementar el comando list', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Implementar paginación', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Comando para agregar tareas', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Actualizar una tarea', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Eliminar una tarea', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Buscar una tarea por id', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Buscar una tarea por texto', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Buscar e imprimir una tarea por id', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Crear ramas para nuevas características', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Actualizar el repositorio en GitHub', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+insert into tasks(title, description, completed, created_at, updated_at) values('Manejar conventional commits', '', false, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
