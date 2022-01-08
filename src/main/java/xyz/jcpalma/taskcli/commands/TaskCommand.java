@@ -6,16 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import org.springframework.shell.table.BeanListTableModel;
-import org.springframework.shell.table.BorderStyle;
-import org.springframework.shell.table.TableBuilder;
-import org.springframework.shell.table.TableModel;
+import org.springframework.shell.table.*;
 import xyz.jcpalma.taskcli.models.Task;
 import xyz.jcpalma.taskcli.services.TaskService;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 
 @ShellComponent
 public class TaskCommand {
@@ -26,6 +24,29 @@ public class TaskCommand {
     @ShellMethod("List all tasks")
     public List<Task> list() {
         return taskService.findAll();
+    }
+
+    @ShellMethod("Print a task by id")
+    public void printTask(@ShellOption({"-i", "--id"}) Long id) {
+        Optional<Task> optionalTask = taskService.findById(id);
+        if (optionalTask.isPresent()) {
+            Task task = optionalTask.get();
+
+            Object[][] data = new Object[][]{
+                {"Id", task.getId()},
+                {"Title", task.getTitle()},
+                {"Description", task.getDescription()},
+                {"Completed", task.getCompleted()}
+            };
+
+            TableModel model = new ArrayTableModel(data);
+            TableBuilder tableBuilder = new TableBuilder(model);
+            tableBuilder.addFullBorder(BorderStyle.fancy_light);
+            System.out.println(tableBuilder.build().render(80));
+
+        } else {
+            System.out.println("Task not found\n");
+        }
     }
 
     @ShellMethod("List all tasks in a table.")
