@@ -45,7 +45,7 @@ public class TaskCommand {
         if( title.isEmpty() ) {
 
             do {
-                newTitle = in.read("Title: ");
+                newTitle = in.read("*Title: ");
             } while (newTitle.isEmpty());
 
         } else {
@@ -67,6 +67,45 @@ public class TaskCommand {
         }
 
         System.out.println();
+    }
+
+    @ShellMethod(value = "Update a task by id", key = {"update", "edit"})
+    public void updateTask(
+        @ShellOption({"--id"}) Long id,
+        @ShellOption(value = {"-t","--title"}, defaultValue = "") String title,
+        @ShellOption(value = {"-d", "--desc"}, defaultValue = "") String description
+    ) {
+        Optional<Task> optionalTask = taskService.findById(id);
+
+        if( !optionalTask.isPresent()) {
+            shellHelper.printError("Task not found\n");
+            return;
+        }
+
+        Task task = optionalTask.get();
+        String newTitle = title;
+        if( title.isEmpty() ) {
+            newTitle = in.read(String.format("Title [%s]: ", task.getTitle()), task.getTitle());
+        }else {
+            System.out.println("Title: " + title);
+        }
+        task.setTitle(newTitle);
+
+        String newDesc = description;
+        if( description.isEmpty() ) {
+            newDesc = in.read(String.format("Description [%s]: ", task.getDescription()), task.getDescription());
+        } else {
+            System.out.println("Description: " + description);
+        }
+        task.setDescription(newDesc);
+
+        Optional<Task> optionalUpdatedTask = taskService.save(task);
+        if(optionalUpdatedTask.isPresent()) {
+            Task updatedTask = optionalUpdatedTask.get();
+            printTask(updatedTask, false);
+            shellHelper.printSuccess(" Task updated! ✓");
+        }
+
     }
 
     @ShellMethod(value = "Complete a task by id", key = {"done", "complete"})
