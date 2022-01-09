@@ -27,6 +27,12 @@ public class TaskService implements ITaskService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<Task> findByCompleted(Pageable pageable) {
+        return repository.findByCompletedTrue(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<Task> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
@@ -51,5 +57,11 @@ public class TaskService implements ITaskService {
             repository.deleteById(id);
         }
         return task;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Task task) {
+        repository.delete(task);
     }
 }

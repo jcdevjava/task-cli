@@ -29,6 +29,14 @@ public class Task {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public Task(){}
+
+    public Task(String title, String description){
+        this.title = title;
+        this.description = description;
+        this.completed = false;
+    }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

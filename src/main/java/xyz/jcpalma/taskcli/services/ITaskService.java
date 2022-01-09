@@ -13,10 +13,14 @@ public interface ITaskService {
 
     Page<Task> findAll(Pageable pageable);
 
+    Page<Task> findByCompleted(Pageable pageable);
+
     Optional<Task> findById(Long id);
 
     Optional<Task> save(Task task);
 
     Optional<Task> deleteById(Long id);
+
+    void delete(Task task);
 
 }
