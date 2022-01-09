@@ -4,11 +4,9 @@ import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Component
 public class ShellHelper {
 
     @Value("${shell.out.info}")
