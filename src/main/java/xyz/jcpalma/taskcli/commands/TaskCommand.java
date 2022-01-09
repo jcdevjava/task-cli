@@ -1,5 +1,6 @@
 package xyz.jcpalma.taskcli.commands;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.shell.standard.ShellComponent;
@@ -29,7 +30,7 @@ public class TaskCommand {
     public TaskCommand(
         TaskService taskService,
         ShellHelper shellHelper,
-        InputReader inputReader
+        @Lazy InputReader inputReader
     ) {
         this.taskService = taskService;
         this.shellHelper = shellHelper;
