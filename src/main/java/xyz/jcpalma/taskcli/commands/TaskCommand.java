@@ -141,7 +141,7 @@ public class TaskCommand {
             String result = force ? "y" : in.read(" Are you sure you want to remove this task? (y/n): ");
             if( result.equals("y") ) {
                 taskService.delete(task);
-                shellHelper.printSuccess(String.format(" Task '%s' deleted!", optionalTask.get().getTitle()));
+                shellHelper.printSuccess(String.format(" Task '%s' deleted! ✓", optionalTask.get().getTitle()));
             }else  {
                 shellHelper.printWarning(" Task not removed!");
             }
