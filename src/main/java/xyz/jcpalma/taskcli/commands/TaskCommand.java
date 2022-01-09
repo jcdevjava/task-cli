@@ -36,6 +36,39 @@ public class TaskCommand {
         this.in = inputReader;
     }
 
+    @ShellMethod(value = "Create a task", key = {"create", "add"})
+    public void createTask(
+        @ShellOption(value = {"-t","--title"}, defaultValue = "") String title,
+        @ShellOption(value = {"-d", "--desc"}, defaultValue = "") String description
+    ){
+        String newTitle = title;
+        if( title.isEmpty() ) {
+
+            do {
+                newTitle = in.read("Title: ");
+            } while (newTitle.isEmpty());
+
+        } else {
+            System.out.println("Title: " + title);
+        }
+
+        String newDesc = description.isEmpty()
+            ? in.read("Description: ")
+            : description;
+
+        Optional<Task> optionalTask =  taskService.save(new Task(newTitle, newDesc));
+
+        if(optionalTask.isPresent()) {
+            final Task task = optionalTask.get();
+            printTask(task, false);
+            shellHelper.printSuccess(" Task created! ✓");
+        } else {
+            shellHelper.printError("Error: Task not created!");
+        }
+
+        System.out.println();
+    }
+
     @ShellMethod(value = "Complete a task by id", key = {"done", "complete"})
     public void completeTask(@ShellOption({"-t", "--task", "--id"}) Long id) {
         Optional<Task> optionalTask = taskService.findById(id);
@@ -51,13 +84,21 @@ public class TaskCommand {
     }
 
     @ShellMethod(value = "Remove a task by id.", key = {"remove", "rm"})
-    public void removeTask(@ShellOption({"-t", "--task", "--id"}) Long id) {
+    public void removeTask(
+        @ShellOption({"-t", "--task", "--id"}) Long id,
+        @ShellOption(
+            value = {"-f"},
+            arity = 0,
+            defaultValue = "false",
+            help = "Remove the task without prompting for confirmation."
+        ) Boolean force
+    ) {
         Optional<Task> optionalTask = taskService.findById(id);
 
         if(optionalTask.isPresent()) {
             Task task = optionalTask.get();
-            printTask(task);
-            String result = in.read(" Are you sure you want to remove this task? (y/n): ");
+            printTask(task, !force);
+            String result = force ? "y" : in.read(" Are you sure you want to remove this task? (y/n): ");
             if( result.equals("y") ) {
                 taskService.delete(task);
                 shellHelper.printSuccess(String.format(" Task '%s' deleted!", optionalTask.get().getTitle()));
@@ -79,7 +120,7 @@ public class TaskCommand {
     public void printTask(@ShellOption({"-t", "--task", "--id"}) Long id) {
         Optional<Task> optionalTask = taskService.findById(id);
         if (optionalTask.isPresent()) {
-            printTask(optionalTask.get());
+            printTask(optionalTask.get(), true);
         } else {
             shellHelper.printError("Task not found\n");
         }
@@ -134,7 +175,7 @@ public class TaskCommand {
         System.out.printf("%s%" + (width - ps.length()) + "s%n%n", ps, mf.format(total));
     }
 
-    private void printTask(Task task) {
+    private void printTask(Task task, boolean newLine) {
         final Object[][] data = new Object[][]{
             {"Id", task.getId()},
             {"Title", task.getTitle()},
@@ -145,7 +186,7 @@ public class TaskCommand {
         TableModel model = new ArrayTableModel(data);
         TableBuilder tableBuilder = new TableBuilder(model);
         tableBuilder.addFullBorder(BorderStyle.fancy_light);
-        System.out.println(tableBuilder.build().render(80));
+        System.out.print(tableBuilder.build().render(80) + (newLine ? "\n" : ""));
     }
 
 }
