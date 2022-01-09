@@ -11,6 +11,9 @@ public class AppPromptProvider implements PromptProvider {
 
     @Override
     public AttributedString getPrompt() {
-        return new AttributedString("task-cli❯ ", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+        return new AttributedString(
+            "task-cli❯ ",
+            AttributedStyle.BOLD.foreground(AttributedStyle.MAGENTA)
+        );
     }
 }
