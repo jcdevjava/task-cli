@@ -62,7 +62,7 @@ public class TaskCommand {
         if(optionalTask.isPresent()) {
             final Task task = optionalTask.get();
             printTask(task, false);
-            shellHelper.printSuccess(" Task created! ✓");
+            shellHelper.printSuccess(" ✓ Task created!");
         } else {
             shellHelper.printError("Error: Task not created!");
         }
@@ -104,7 +104,7 @@ public class TaskCommand {
         if(optionalUpdatedTask.isPresent()) {
             Task updatedTask = optionalUpdatedTask.get();
             printTask(updatedTask, false);
-            shellHelper.printSuccess(" Task updated! ✓");
+            shellHelper.printSuccess(" ✓ Task updated!");
         }
 
     }
@@ -143,7 +143,7 @@ public class TaskCommand {
                 taskService.delete(task);
                 shellHelper.printSuccess(String.format(" Task '%s' deleted!", optionalTask.get().getTitle()));
             }else  {
-                shellHelper.printWarning(" Task not removed!");
+                shellHelper.printWarning(" ✓ Task not removed!");
             }
         }else {
             shellHelper.printError("Error: Task not found!");
