@@ -27,13 +27,26 @@ public class TaskCommand {
         this.shellHelper = shellHelper;
     }
 
+    @ShellMethod(value = "Complete a task by id", key = {"done", "complete"})
+    public void completeTask(@ShellOption({"-t", "--task", "--id"}) Long id) {
+        Optional<Task> optionalTask = taskService.findById(id);
+        if (optionalTask.isPresent()) {
+            Task task = optionalTask.get();
+            task.setCompleted(true);
+            taskService.save(task);
+            shellHelper.printSuccess("Task completed\n");
+        } else {
+            shellHelper.printError("Task not found\n");
+        }
+    }
+
     @ShellMethod("List all tasks")
     public List<Task> list() {
         return taskService.findAll();
     }
 
-    @ShellMethod("Print a task by id")
-    public void printTask(@ShellOption({"-i", "--id"}) Long id) {
+    @ShellMethod(value = "Print a task by id", key = {"print", "show"})
+    public void printTask(@ShellOption({"-t", "--task", "--id"}) Long id) {
         Optional<Task> optionalTask = taskService.findById(id);
         if (optionalTask.isPresent()) {
             Task task = optionalTask.get();
@@ -57,8 +70,8 @@ public class TaskCommand {
 
     @ShellMethod("List all tasks in a table.")
     public void printTasks(
-        @ShellOption(value = {"-p"}, defaultValue = "0", help = "Number of page between 1 to n.") Integer page,
-        @ShellOption(value = {"-s"}, defaultValue = "5", help = "Positive number for size of page.") Integer size
+        @ShellOption(value = {"-p", "--page"}, defaultValue = "0", help = "Number of page between 1 to n.") Integer page,
+        @ShellOption(value = {"-s", "--size"}, defaultValue = "5", help = "Positive number for size of page.") Integer size
     ) {
 
         Iterable<Task> tasks = page > 0
