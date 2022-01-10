@@ -3,6 +3,7 @@ package xyz.jcpalma.taskcli.commands;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -16,7 +17,6 @@ import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @ShellComponent
 public class TaskCommand {
@@ -173,20 +173,33 @@ public class TaskCommand {
         @ShellOption(value = {"-c", "--completed"}, arity = 0, defaultValue = "false", help = "Filter by completed.") Boolean completed
     ) {
 
-        Iterable<Task> tasks = page > 0
-            ? completed
-                ? taskService.findByCompleted(PageRequest.of(page - 1, size))
-                : taskService.findAll(PageRequest.of(page - 1, size))
-            : completed
-                ? taskService.findAll().stream().filter(Task::getCompleted).collect(Collectors.toList())
-                : taskService.findAll();
+        final Pageable pageable = page > 0
+            ? PageRequest.of(page - 1, size)
+            : Pageable.unpaged();
 
-        final TableModel model = new BeanListTableModel<>(tasks, getHeaders());
-        final TableBuilder tableBuilder = new TableBuilder(model);
-        tableBuilder.addFullBorder(BorderStyle.fancy_light);
-        String content = tableBuilder.build().render(80);
-        System.out.print(content);
-        printFooter(tasks, content.indexOf("\n"));
+        final Page<Task> tasks = completed
+                ? taskService.findByCompleted(pageable)
+                : taskService.findAll(pageable);
+
+        printTasks(tasks);
+    }
+
+    @ShellMethod(value = "Find tasks by title or description.", key = {"find", "search"})
+    public void findTasksByTitleOrDescription(
+        @ShellOption(value = {"-s", "--search"}, help = "Search by title or description.") String search,
+        @ShellOption(value = {"-p", "--page"}, defaultValue = "0", help = "Number of page between 1 to n.") Integer page,
+        @ShellOption(value = {"-s", "--size"}, defaultValue = "5", help = "Positive number for size of page.") Integer size
+    ) {
+
+        final Pageable pageable = page > 0
+            ? PageRequest.of(page - 1, size)
+            : Pageable.unpaged();
+
+        final Page<Task> tasks = taskService
+            .findByTitleOrDescription(search, pageable);
+
+        printTasks(tasks);
+
     }
 
     private LinkedHashMap<String, Object> getHeaders() {
@@ -198,21 +211,25 @@ public class TaskCommand {
         return headers;
     }
 
-    private void printFooter(Iterable<Task> tasks, int width) {
+    private void printFooter(Page<Task> tasks, int width) {
 
-        String ps = "";
-        Object[] total;
-
-        if (tasks instanceof Page) {
-            Page<Task> page = (Page<Task>) tasks;
-            ps = String.format(" Page %d of %d ", page.getNumber() + 1, page.getTotalPages());
-            total = new Object[]{page.getTotalElements()};
-        } else {
-            total = new Object[]{((List<Task>) tasks).size()};
-        }
+        String ps = String.format(" Page %d of %d ",
+            tasks.getNumber() + (tasks.getTotalPages() > 0 ? 1 : 0),
+            tasks.getTotalPages()
+        );
+        final Object[] total = new Object[]{tasks.getTotalElements()};
 
         MessageFormat mf = new MessageFormat("({0, choice, 0#no tasks|1#1 task|1<{0} tasks})");
         System.out.printf("%s%" + (width - ps.length()) + "s%n%n", ps, mf.format(total));
+    }
+
+    private void printTasks(Page<Task> tasks) {
+        final TableModel model = new BeanListTableModel<>(tasks, getHeaders());
+        final TableBuilder tableBuilder = new TableBuilder(model);
+        tableBuilder.addFullBorder(BorderStyle.fancy_light);
+        String content = tableBuilder.build().render(80);
+        System.out.print(content);
+        printFooter(tasks, content.indexOf("\n"));
     }
 
     private void printTask(Task task, boolean newLine) {

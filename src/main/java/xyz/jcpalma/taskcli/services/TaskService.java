@@ -33,6 +33,12 @@ public class TaskService implements ITaskService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<Task> findByTitleOrDescription(String search, Pageable pageable){
+        return repository.findByTitleContainsIgnoreCaseOrDescriptionContainsIgnoreCase(pageable, search, search);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<Task> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }

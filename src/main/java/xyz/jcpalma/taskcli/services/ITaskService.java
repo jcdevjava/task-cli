@@ -15,6 +15,8 @@ public interface ITaskService {
 
     Page<Task> findByCompleted(Pageable pageable);
 
+    Page<Task> findByTitleOrDescription(String search, Pageable pageable);
+
     Optional<Task> findById(Long id);
 
     Optional<Task> save(Task task);
