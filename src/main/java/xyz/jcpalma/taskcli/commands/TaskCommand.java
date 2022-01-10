@@ -9,12 +9,14 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.*;
 import xyz.jcpalma.taskcli.helpers.CompletedFormatter;
+import xyz.jcpalma.taskcli.helpers.CreatedFormatter;
 import xyz.jcpalma.taskcli.helpers.InputReader;
 import xyz.jcpalma.taskcli.helpers.ShellHelper;
 import xyz.jcpalma.taskcli.models.Task;
 import xyz.jcpalma.taskcli.services.TaskService;
 
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -228,12 +230,7 @@ public class TaskCommand {
     private void printTasks(Page<Task> tasks) {
         final TableModel model = new BeanListTableModel<>(tasks, getHeaders());
         final TableBuilder tableBuilder = new TableBuilder(model);
-
-        tableBuilder.on(CellMatchers.ofType(Boolean.class))
-            .addFormatter(new CompletedFormatter())
-            .addAligner(SimpleHorizontalAligner.center);
-
-        tableBuilder.addFullBorder(BorderStyle.fancy_light);
+        applyFormatters(tableBuilder);
 
         String content = tableBuilder.build().render(100);
         System.out.print(content);
@@ -246,13 +243,31 @@ public class TaskCommand {
             {"Id", task.getId()},
             {"Title", task.getTitle()},
             {"Description", task.getDescription()},
-            {"Completed", task.getCompleted()}
+            {"Completed", task.getCompleted()},
+            {"Created At", task.getCreatedAt()}
         };
 
         TableModel model = new ArrayTableModel(data);
         TableBuilder tableBuilder = new TableBuilder(model);
-        tableBuilder.addFullBorder(BorderStyle.fancy_light);
+        applyFormatters(tableBuilder);
         System.out.print(tableBuilder.build().render(80) + (newLine ? "\n" : ""));
+    }
+
+    private void applyFormatters(TableBuilder tableBuilder) {
+        tableBuilder
+            .on(CellMatchers.row(0))
+            .addAligner(SimpleHorizontalAligner.center);
+
+        tableBuilder
+            .on(CellMatchers.ofType(Boolean.class))
+            .addFormatter(new CompletedFormatter())
+            .addAligner(SimpleHorizontalAligner.center);
+
+        tableBuilder
+            .on(CellMatchers.ofType(LocalDateTime.class))
+            .addFormatter(new CreatedFormatter());
+
+        tableBuilder.addFullBorder(BorderStyle.fancy_light);
     }
 
 }
