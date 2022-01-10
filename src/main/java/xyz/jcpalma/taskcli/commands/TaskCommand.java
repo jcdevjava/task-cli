@@ -230,6 +230,11 @@ public class TaskCommand {
     private void printTasks(Page<Task> tasks) {
         final TableModel model = new BeanListTableModel<>(tasks, getHeaders());
         final TableBuilder tableBuilder = new TableBuilder(model);
+
+        tableBuilder
+            .on(CellMatchers.row(0))
+            .addAligner(SimpleHorizontalAligner.center);
+
         applyFormatters(tableBuilder);
 
         String content = tableBuilder.build().render(100);
@@ -244,20 +249,17 @@ public class TaskCommand {
             {"Title", task.getTitle()},
             {"Description", task.getDescription()},
             {"Completed", task.getCompleted()},
-            {"Created At", task.getCreatedAt()}
+            {"Created At", task.getCreatedAt()},
+            {"Updated At", task.getUpdatedAt()}
         };
 
         TableModel model = new ArrayTableModel(data);
         TableBuilder tableBuilder = new TableBuilder(model);
-        applyFormatters(tableBuilder);
+        applyFormatters(tableBuilder, new CreatedFormatter("yyyy-MM-dd HH:mm:ss"));
         System.out.print(tableBuilder.build().render(80) + (newLine ? "\n" : ""));
     }
 
-    private void applyFormatters(TableBuilder tableBuilder) {
-        tableBuilder
-            .on(CellMatchers.row(0))
-            .addAligner(SimpleHorizontalAligner.center);
-
+    private void applyFormatters(TableBuilder tableBuilder, CreatedFormatter createdFormatter) {
         tableBuilder
             .on(CellMatchers.ofType(Boolean.class))
             .addFormatter(new CompletedFormatter())
@@ -265,9 +267,14 @@ public class TaskCommand {
 
         tableBuilder
             .on(CellMatchers.ofType(LocalDateTime.class))
-            .addFormatter(new CreatedFormatter());
+            .addFormatter(createdFormatter)
+            .addAligner(SimpleHorizontalAligner.center);
 
         tableBuilder.addFullBorder(BorderStyle.fancy_light);
+    }
+
+    private void applyFormatters(TableBuilder tableBuilder) {
+        applyFormatters(tableBuilder, new CreatedFormatter());
     }
 
 }
