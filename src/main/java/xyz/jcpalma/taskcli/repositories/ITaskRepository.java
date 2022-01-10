@@ -8,4 +8,7 @@ import xyz.jcpalma.taskcli.models.Task;
 public interface ITaskRepository extends PagingAndSortingRepository<Task, Long> {
 
     Page<Task> findByCompletedTrue(Pageable pageable);
+
+    Page<Task> findByTitleContainsIgnoreCaseOrDescriptionContainsIgnoreCase(Pageable pageable, String title, String description);
+
 }

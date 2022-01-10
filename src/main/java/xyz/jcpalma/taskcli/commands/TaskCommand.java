@@ -181,12 +181,20 @@ public class TaskCommand {
                 ? taskService.findAll().stream().filter(Task::getCompleted).collect(Collectors.toList())
                 : taskService.findAll();
 
-        final TableModel model = new BeanListTableModel<>(tasks, getHeaders());
-        final TableBuilder tableBuilder = new TableBuilder(model);
-        tableBuilder.addFullBorder(BorderStyle.fancy_light);
-        String content = tableBuilder.build().render(80);
-        System.out.print(content);
-        printFooter(tasks, content.indexOf("\n"));
+        printTasks(tasks);
+    }
+
+    @ShellMethod(value = "Find tasks by title or description.", key = {"find", "search"})
+    public void findTasksByTitleOrDescription(
+        @ShellOption(value = {"-s", "--search"}, help = "Search by title or description.") String search,
+        @ShellOption(value = {"-p", "--page"}, defaultValue = "1", help = "Number of page between 1 to n.") Integer page,
+        @ShellOption(value = {"-s", "--size"}, defaultValue = "5", help = "Positive number for size of page.") Integer size
+    ) {
+        final Iterable<Task> tasks = taskService
+            .findByTitleOrDescription(search, PageRequest.of(page - 1, size));
+
+        printTasks(tasks);
+
     }
 
     private LinkedHashMap<String, Object> getHeaders() {
@@ -205,7 +213,10 @@ public class TaskCommand {
 
         if (tasks instanceof Page) {
             Page<Task> page = (Page<Task>) tasks;
-            ps = String.format(" Page %d of %d ", page.getNumber() + 1, page.getTotalPages());
+            ps = String.format(" Page %d of %d ",
+                page.getNumber() + (page.getTotalPages() > 0 ? 1 : 0),
+                page.getTotalPages()
+            );
             total = new Object[]{page.getTotalElements()};
         } else {
             total = new Object[]{((List<Task>) tasks).size()};
@@ -213,6 +224,15 @@ public class TaskCommand {
 
         MessageFormat mf = new MessageFormat("({0, choice, 0#no tasks|1#1 task|1<{0} tasks})");
         System.out.printf("%s%" + (width - ps.length()) + "s%n%n", ps, mf.format(total));
+    }
+
+    private void printTasks(Iterable<Task> tasks) {
+        final TableModel model = new BeanListTableModel<>(tasks, getHeaders());
+        final TableBuilder tableBuilder = new TableBuilder(model);
+        tableBuilder.addFullBorder(BorderStyle.fancy_light);
+        String content = tableBuilder.build().render(80);
+        System.out.print(content);
+        printFooter(tasks, content.indexOf("\n"));
     }
 
     private void printTask(Task task, boolean newLine) {
