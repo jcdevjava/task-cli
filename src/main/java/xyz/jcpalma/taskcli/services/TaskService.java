@@ -27,8 +27,10 @@ public class TaskService implements ITaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Task> findByCompleted(Pageable pageable) {
-        return repository.findByCompletedTrue(pageable);
+    public Page<Task> findByCompleted(Pageable pageable, boolean completed) {
+        return completed
+            ? repository.findByCompletedTrue(pageable)
+            : repository.findByCompletedFalse(pageable);
     }
 
     @Override

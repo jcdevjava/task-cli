@@ -173,6 +173,7 @@ public class TaskCommand {
     public void printTasks(
         @ShellOption(value = {"-p", "--page"}, defaultValue = "0", help = "Number of page between 1 to n.") Integer page,
         @ShellOption(value = {"-s", "--size"}, defaultValue = "5", help = "Positive number for size of page.") Integer size,
+        @ShellOption(value = {"-a", "--all"}, arity = 0, defaultValue = "false", help = "All tasks completed or not.") Boolean all,
         @ShellOption(value = {"-c", "--completed"}, arity = 0, defaultValue = "false", help = "Filter by completed.") Boolean completed
     ) {
 
@@ -180,9 +181,9 @@ public class TaskCommand {
             ? PageRequest.of(page - 1, size)
             : Pageable.unpaged();
 
-        final Page<Task> tasks = completed
-                ? taskService.findByCompleted(pageable)
-                : taskService.findAll(pageable);
+        final Page<Task> tasks = all
+                ? taskService.findAll(pageable)
+                : taskService.findByCompleted(pageable, completed);
 
         printTasks(tasks);
     }

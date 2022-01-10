@@ -9,6 +9,8 @@ public interface ITaskRepository extends PagingAndSortingRepository<Task, Long> 
 
     Page<Task> findByCompletedTrue(Pageable pageable);
 
+    Page<Task> findByCompletedFalse(Pageable pageable);
+
     Page<Task> findByTitleContainsIgnoreCaseOrDescriptionContainsIgnoreCase(Pageable pageable, String title, String description);
 
 }

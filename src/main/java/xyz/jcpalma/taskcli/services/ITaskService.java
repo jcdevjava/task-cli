@@ -13,7 +13,7 @@ public interface ITaskService {
 
     Page<Task> findAll(Pageable pageable);
 
-    Page<Task> findByCompleted(Pageable pageable);
+    Page<Task> findByCompleted(Pageable pageable, boolean completed);
 
     Page<Task> findByTitleOrDescription(String search, Pageable pageable);
 
