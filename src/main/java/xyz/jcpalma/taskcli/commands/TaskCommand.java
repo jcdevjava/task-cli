@@ -8,6 +8,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.*;
+import xyz.jcpalma.taskcli.helpers.CompletedFormatter;
 import xyz.jcpalma.taskcli.helpers.InputReader;
 import xyz.jcpalma.taskcli.helpers.ShellHelper;
 import xyz.jcpalma.taskcli.models.Task;
@@ -208,6 +209,7 @@ public class TaskCommand {
         headers.put("title", "Title");
         headers.put("description", "Description");
         headers.put("completed", "Completed");
+        headers.put("createdAt", "Created At");
         return headers;
     }
 
@@ -226,9 +228,16 @@ public class TaskCommand {
     private void printTasks(Page<Task> tasks) {
         final TableModel model = new BeanListTableModel<>(tasks, getHeaders());
         final TableBuilder tableBuilder = new TableBuilder(model);
+
+        tableBuilder.on(CellMatchers.ofType(Boolean.class))
+            .addFormatter(new CompletedFormatter())
+            .addAligner(SimpleHorizontalAligner.center);
+
         tableBuilder.addFullBorder(BorderStyle.fancy_light);
-        String content = tableBuilder.build().render(80);
+
+        String content = tableBuilder.build().render(100);
         System.out.print(content);
+
         printFooter(tasks, content.indexOf("\n"));
     }
 
