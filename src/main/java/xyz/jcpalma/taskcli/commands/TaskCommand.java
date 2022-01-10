@@ -218,10 +218,13 @@ public class TaskCommand {
 
     private void printFooter(Page<Task> tasks, int width) {
 
-        String ps = String.format(" Page %d of %d ",
-            tasks.getNumber() + (tasks.getTotalPages() > 0 ? 1 : 0),
-            tasks.getTotalPages()
-        );
+        String ps = tasks.getTotalElements() > 0
+            ?  String.format(" Page %d of %d ",
+                tasks.getNumber() + 1,
+                tasks.getTotalPages()
+            )
+            : "";
+
         final Object[] total = new Object[]{tasks.getTotalElements()};
 
         MessageFormat mf = new MessageFormat("({0, choice, 0#no tasks|1#1 task|1<{0} tasks})");
