@@ -70,7 +70,7 @@ public class TaskCommand {
             shellHelper.printError("Error: Task not created!");
         }
 
-        System.out.println();
+        shellHelper.print("\n");
     }
 
     @ShellMethod(value = "Update a task by id", key = {"update", "edit"})
@@ -81,7 +81,7 @@ public class TaskCommand {
     ) {
         Optional<Task> optionalTask = taskService.findById(id);
 
-        if( !optionalTask.isPresent()) {
+        if(optionalTask.isEmpty()) {
             shellHelper.printError("Task not found\n");
             return;
         }
